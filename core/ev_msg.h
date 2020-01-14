@@ -11,6 +11,8 @@
 #ifndef __EV_MSG_H__
 #define __EV_MSG_H__
 
+#include <rtconfig.h>
+
 #define IS_SAME_TOPIC(topica, topicb)  (topica == topicb)
 
 #define DEF_EV_TOPICS(mytopics)  \
@@ -31,7 +33,16 @@
         EV_TOTAL_TOPICS                         \
     };
 
-#include <mytopics.h>
+#if defined(PKG_EV_ENABLING_CUSTOM_TOPICS)
+    #include <mytopics.h>
+    #ifdef MY_EV_TOPICS
+        DEF_EV_TOPICS(MY_EV_TOPICS)
+    #else
+        DEF_EV_TOPICS()
+    #endif
+#else
+    DEF_EV_TOPICS()
+#endif
 
 /**
  * unit: mg, mdps, mGauss
