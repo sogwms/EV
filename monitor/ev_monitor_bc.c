@@ -47,20 +47,20 @@ static void __check_imbalance(struct ev_monitor_bc *monitor_bc, struct msg_rpy *
 {
     if (mrpy->pitch > IMBALANCE_ANGLE || mrpy->pitch < -IMBALANCE_ANGLE)
     {
+        LOG_I("Imbalance");
+
         monitor_bc->test_balance = __check_balance;
         __cis(monitor_bc, RT_TRUE, EV_SIGNAL_IMBALANCE);
-
-        LOG_I("Imbalance");
     }
 }
 static void __check_balance(struct ev_monitor_bc *monitor_bc, struct msg_rpy *mrpy)
 {
     if (mrpy->pitch > -BALANCE_ANGLE && mrpy->pitch < BALANCE_ANGLE)
     {
+        LOG_I("Balance");
+
         monitor_bc->test_balance = __check_imbalance;
         __cis(monitor_bc, RT_FALSE, EV_SIGNAL_BALANCE);
-
-        LOG_I("Balance");
     }
 }
 
@@ -70,11 +70,11 @@ static void __check_low_power(struct ev_monitor_bc *monitor_bc, struct msg_power
     {
         struct msg_signal msignal;
 
+        LOG_I("Low power");
+
         monitor_bc->test_power = __check_normal_power;
         msignal.info = EV_SIGNAL_LOW_POWER;
         EV_PUBLISH(monitor_bc, EV_TOPIC_SIGNAL, &msignal);
-
-        LOG_I("Low power");
     }
 }
 static void __check_normal_power(struct ev_monitor_bc *monitor_bc, struct msg_power *mpower)
@@ -83,11 +83,11 @@ static void __check_normal_power(struct ev_monitor_bc *monitor_bc, struct msg_po
     {
         struct msg_signal msignal;
 
+        LOG_I("Normal power");
+
         monitor_bc->test_power = __check_low_power;
         msignal.info = EV_SIGNAL_NORMAL_POWER;
         EV_PUBLISH(monitor_bc, EV_TOPIC_SIGNAL, &msignal);
-
-        LOG_I("Normal power");
     }
 }
 

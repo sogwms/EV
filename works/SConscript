@@ -5,7 +5,7 @@ from building import *
 cwd  = GetCurrentDir()
 objs = []
 
-d = 'me'
+d = 'my'
 
 path = os.path.join(cwd, d)
 if os.path.isfile(os.path.join(path, 'SConscript')):
