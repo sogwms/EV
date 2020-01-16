@@ -30,7 +30,8 @@ static void evt_cu_bcar(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        rt_kprintf("ev_cu_bcar [OPTION] [PARAMS]\n");
+        rt_kprintf("Usage: ev_cu_bcar [OPTION]\n");
+        rt_kprintf("Options:\n");
         rt_kprintf("    read\n");
         rt_kprintf("    set <akp> <akd> <skp> <ski> <rkp> <rkd>\n");
     }

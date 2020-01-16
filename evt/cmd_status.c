@@ -75,7 +75,8 @@ static void evt_status(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        rt_kprintf("evt_status [OPTION] [PARAMS]\n");
+        rt_kprintf("Usage: evt_status [OPTION]\n");
+        rt_kprintf("Options:\n");
         rt_kprintf("    power\n");
         rt_kprintf("    rpy <interval> <duration>\n");
         rt_kprintf("    imu <interval> <duration>\n");

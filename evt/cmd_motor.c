@@ -40,10 +40,10 @@ static void __set_motor_speed(int m1, int m2, int m3, int m4)
 
 static void evt_motor(int argc, char *argv[])
 {
-
     if (argc < 2)
     {
-        rt_kprintf("evt_motor [OPTION] [PARAMS]\n");
+        rt_kprintf("Usage: evt_motor [OPTION]\n");
+        rt_kprintf("Options:\n");
         rt_kprintf("    read <interval> <duration>\n");
         rt_kprintf("    set <m1> <m2> <m3> <m4> <duration>\n");
     }
