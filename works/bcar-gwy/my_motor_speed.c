@@ -88,7 +88,7 @@ int my_motor_speed_install(int sample_time_ms, rt_uint32_t m1_maximum_speed, rt_
     motor_speed_obj.ops = &_ops;
     EV_CHECK_EOK_RVL(ev_motor_speed_install(&motor_speed_obj));
 
-    g_thread = rt_thread_create(thread_name, thread_entry, RT_NULL, 256, thread_priority, 20);
+    g_thread = rt_thread_create(thread_name, thread_entry, RT_NULL, stack_size, thread_priority, 20);
     if (g_thread == RT_NULL)
     {
         LOG_E("Failed to create thread");
