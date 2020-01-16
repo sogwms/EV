@@ -21,6 +21,8 @@ struct ev_status
     struct msg_rpy rpy;
     struct msg_power power;
     struct msg_motion motion;
+    struct msg_sys_status sys;
+    struct msg_sys_status sys_shadow;
 };
 
 typedef struct ev_status *ev_status_t;

@@ -25,9 +25,10 @@
         EV_TOPIC_SET_MOTOR_SPEED,               \
         EV_TOPIC_LOCK_MOTOR,                    \
         EV_TOPIC_RC,                            \
-        EV_TOPIC_SYS_STATE,                     \
+        EV_TOPIC_SYS_STATUS,                    \
         EV_TOPIC_MOTOR_SPEED,                   \
         EV_TOPIC_REQUEST_MOTOR_SPEED,           \
+        EV_TOPIC_SIGNAL,                        \
                                                 \
         mytopics                                \
         EV_TOTAL_TOPICS                         \
@@ -111,15 +112,24 @@ struct msg_lock_motor
     int bool_value;     // TRUE <--> lock;  FALSE <--> unlock
 };
 
-enum ev_sys_state{
-    EV_STATE_RUNNING,
-    EV_STATE_SLEEP,
-    EV_STATE_FAULT,
+struct msg_sys_status
+{
+    int bl_low_power    : 1;
+    int bl_running      : 1;
+    int bl_fault        : 1;
+    int bl_balance      : 1;
 };
 
-struct msg_sys_state
+enum ev_signal{
+    EV_SIGNAL_LOW_POWER,
+    EV_SIGNAL_NORMAL_POWER,
+    EV_SIGNAL_IMBALANCE,
+    EV_SIGNAL_BALANCE,
+};
+
+struct msg_signal
 {
-    int state;
+    int info;
 };
 
 #endif /* __EV_MSG_H__ */

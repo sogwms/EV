@@ -29,34 +29,38 @@ typedef struct ev_monitor_bc *ev_monitor_bc_t;
 static struct ev_monitor_bc g_monitor_bc = {0};
 
 static void __check_imbalance(struct ev_monitor_bc *monitor_bc, struct msg_rpy *mrpy);
-static void __check_imbalance_recovery(struct ev_monitor_bc *monitor_bc, struct msg_rpy *mrpy);
+static void __check_balance(struct ev_monitor_bc *monitor_bc, struct msg_rpy *mrpy);
 static void __check_low_power(struct ev_monitor_bc *monitor_bc, struct msg_power *mpower);
-static void __check_low_power_recovery(struct ev_monitor_bc *monitor_bc, struct msg_power *mpower);
+static void __check_normal_power(struct ev_monitor_bc *monitor_bc, struct msg_power *mpower);
 
-static void __cis(struct ev_monitor_bc *monitor_bc, int isLock, int state)
+static void __cis(struct ev_monitor_bc *monitor_bc, int isLock, int signal)
 {
     struct msg_lock_motor mlmotor;
-    struct msg_sys_state msstate;
+    struct msg_signal msignal;
     mlmotor.bool_value = isLock;
-    msstate.state = state;
+    msignal.info = signal;
     EV_PUBLISH(monitor_bc, EV_TOPIC_LOCK_MOTOR, &mlmotor);
-    EV_PUBLISH(monitor_bc, EV_TOPIC_SYS_STATE, &msstate);
+    EV_PUBLISH(monitor_bc, EV_TOPIC_SIGNAL, &msignal);
 }
 
 static void __check_imbalance(struct ev_monitor_bc *monitor_bc, struct msg_rpy *mrpy)
 {
     if (mrpy->pitch > IMBALANCE_ANGLE || mrpy->pitch < -IMBALANCE_ANGLE)
     {
-        __cis(monitor_bc, RT_TRUE, EV_STATE_FAULT);
-        monitor_bc->test_balance = __check_imbalance_recovery;
+        monitor_bc->test_balance = __check_balance;
+        __cis(monitor_bc, RT_TRUE, EV_SIGNAL_IMBALANCE);
+
+        LOG_I("Imbalance");
     }
 }
-static void __check_imbalance_recovery(struct ev_monitor_bc *monitor_bc, struct msg_rpy *mrpy)
+static void __check_balance(struct ev_monitor_bc *monitor_bc, struct msg_rpy *mrpy)
 {
     if (mrpy->pitch > -BALANCE_ANGLE && mrpy->pitch < BALANCE_ANGLE)
     {
-        __cis(monitor_bc, RT_FALSE, EV_STATE_RUNNING);
         monitor_bc->test_balance = __check_imbalance;
+        __cis(monitor_bc, RT_FALSE, EV_SIGNAL_BALANCE);
+
+        LOG_I("Balance");
     }
 }
 
@@ -64,22 +68,26 @@ static void __check_low_power(struct ev_monitor_bc *monitor_bc, struct msg_power
 {
     if (mpower->current_power <= mpower->alert_power)
     {
-        struct msg_sys_state msstate;
-        msstate.state = EV_STATE_FAULT;
-        EV_PUBLISH(monitor_bc, EV_TOPIC_SYS_STATE, &msstate);
+        struct msg_signal msignal;
 
-        monitor_bc->test_power = __check_low_power_recovery;
+        monitor_bc->test_power = __check_normal_power;
+        msignal.info = EV_SIGNAL_LOW_POWER;
+        EV_PUBLISH(monitor_bc, EV_TOPIC_SIGNAL, &msignal);
+
+        LOG_I("Low power");
     }
 }
-static void __check_low_power_recovery(struct ev_monitor_bc *monitor_bc, struct msg_power *mpower)
+static void __check_normal_power(struct ev_monitor_bc *monitor_bc, struct msg_power *mpower)
 {
     if (mpower->current_power > mpower->alert_power)
     {
-        struct msg_sys_state msstate;
-        msstate.state = EV_STATE_RUNNING;
-        EV_PUBLISH(monitor_bc, EV_TOPIC_SYS_STATE, &msstate);
+        struct msg_signal msignal;
 
         monitor_bc->test_power = __check_low_power;
+        msignal.info = EV_SIGNAL_NORMAL_POWER;
+        EV_PUBLISH(monitor_bc, EV_TOPIC_SIGNAL, &msignal);
+
+        LOG_I("Normal power");
     }
 }
 
@@ -136,6 +144,8 @@ int ev_monitor_bc_install(void)
 
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(monitor_bc, EV_TOPIC_RPY));
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(monitor_bc, EV_TOPIC_POWER));
+
+    LOG_I("Installed");
 
     return RT_EOK;
 }

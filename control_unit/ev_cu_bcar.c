@@ -94,10 +94,10 @@ static void pssc_notify(pss_client_t pssc, int topic, void *msg)
     {
         rt_memcpy(&cu_bcar->info.motion, msg, sizeof(struct msg_motion));
     }
-    else if (IS_SAME_TOPIC(topic, EV_TOPIC_SYS_STATE))
+    else if (IS_SAME_TOPIC(topic, EV_TOPIC_SYS_STATUS))
     {
-        struct msg_sys_state *msstate = (struct msg_sys_state *)msg;
-        if (msstate->state == EV_STATE_FAULT)
+        struct msg_sys_status *msstatus = (struct msg_sys_status *)msg;
+        if (!msstatus->bl_running)
         {
             cu_bcar->params.sintegral = 0;
             cu_bcar->params.serr = 0;
@@ -165,7 +165,7 @@ int ev_cu_bcar_install(float akp, float akd, float skp, float ski, float rkp, fl
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(cu_bcar, EV_TOPIC_IMU));
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(cu_bcar, EV_TOPIC_RPY));
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(cu_bcar, EV_TOPIC_RC));
-    EV_CHECK_EOK_RVL(EV_SUBSCRIBE(cu_bcar, EV_TOPIC_SYS_STATE));
+    EV_CHECK_EOK_RVL(EV_SUBSCRIBE(cu_bcar, EV_TOPIC_SYS_STATUS));
 
     return RT_EOK;
 }

@@ -48,6 +48,49 @@ static void pssc_notify(pss_client_t pssc, int topic, void *msg)
             rt_memcpy(&status->power, mpower, sizeof(struct msg_power));
         }
         break;
+    case EV_TOPIC_SIGNAL:
+        if (msg != RT_NULL) 
+        {
+            struct msg_signal *msignal = (struct msg_signal *)msg;
+
+            switch (msignal->info)
+            {
+            case EV_SIGNAL_LOW_POWER:
+                status->sys.bl_low_power = RT_TRUE;
+                break;
+            case EV_SIGNAL_NORMAL_POWER:
+                status->sys.bl_low_power = RT_FALSE;
+                break;
+            case EV_SIGNAL_IMBALANCE:
+                status->sys.bl_balance = RT_FALSE;
+                break;
+            case EV_SIGNAL_BALANCE:
+                status->sys.bl_balance = RT_TRUE;
+                break;
+            default:
+                break;
+            }
+            if (rt_memcmp(&status->sys, &status->sys_shadow, sizeof(struct msg_sys_status)) != 0)
+            {
+                if (status->sys.bl_low_power || !status->sys.bl_balance)
+                {
+                    status->sys.bl_fault = RT_TRUE;
+                }
+                else
+                {
+                    status->sys.bl_fault = RT_FALSE;
+                }
+
+                if (status->sys.bl_fault)   
+                    status->sys.bl_running = RT_FALSE;
+                else
+                    status->sys.bl_running = RT_TRUE;
+                
+                EV_PUBLISH(&status, EV_TOPIC_SYS_STATUS, &status->sys);
+                rt_memcpy(&status->sys_shadow, &status->sys, sizeof(struct msg_sys_status));
+            }
+        }
+        break;
     default:
         break;
     }
@@ -86,6 +129,9 @@ int ev_status_install(ev_status_t status)
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(status, EV_TOPIC_RPY));
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(status, EV_TOPIC_MOTION));
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(status, EV_TOPIC_POWER));
+    EV_CHECK_EOK_RVL(EV_SUBSCRIBE(status, EV_TOPIC_SIGNAL));
+
+    LOG_I("Installed");
 
     return RT_EOK;
 }

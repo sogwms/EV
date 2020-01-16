@@ -20,7 +20,7 @@
 enum {
     INDEX_SHOW_RUNNING = 0,
     INDEX_SHOW_FAULT,
-    INDEX_SHOW_SLEEP,
+    INDEX_SHOW_STOP,
 };
 
 static const int g_show_table[][2] = {
@@ -50,15 +50,28 @@ static void pssc_notify(pss_client_t pssc, int topic, void *msg)
 
     if (msg == RT_NULL) return;
 
-    if (IS_SAME_TOPIC(topic, EV_TOPIC_SYS_STATE))
+    if (IS_SAME_TOPIC(topic, EV_TOPIC_SYS_STATUS))
     {
-        struct msg_sys_state *sys_state = (struct msg_sys_state *)msg;
-        if (sys_state->state == EV_STATE_RUNNING)
-            ind_led->index = INDEX_SHOW_RUNNING;
-        else if (sys_state->state == EV_STATE_SLEEP)
-            ind_led->index = INDEX_SHOW_SLEEP;
-        else if (sys_state->state == EV_STATE_FAULT)
+        struct msg_sys_status *sys_status = (struct msg_sys_status *)msg;
+        
+        if (sys_status->bl_fault)
+        {
             ind_led->index = INDEX_SHOW_FAULT;
+            LOG_I("show fault");
+        }
+        else
+        {
+            if (sys_status->bl_running)
+            {
+                ind_led->index = INDEX_SHOW_RUNNING;
+                LOG_I("show running");
+            }
+            else
+            {
+                ind_led->index = INDEX_SHOW_STOP;
+                LOG_I("show stop");
+            }
+        }
     }
 }
 
@@ -113,7 +126,7 @@ int ev_indicator_led_install(ev_indicator_led_t ind_led, char *thread_name, rt_u
     rt_thread_suspend(thread);
     rt_exit_critical();
 
-    EV_CHECK_EOK_RVL(EV_SUBSCRIBE(ind_led, EV_TOPIC_SYS_STATE));
+    EV_CHECK_EOK_RVL(EV_SUBSCRIBE(ind_led, EV_TOPIC_SYS_STATUS));
 
     return RT_EOK;
 }

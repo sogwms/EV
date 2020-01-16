@@ -22,7 +22,6 @@ struct ev_indicator_led_ops
 struct ev_indicator_led
 {
     struct ev_object parent;
-    struct msg_sys_state state;
     rt_thread_t thread;
 
     uint8_t index;
