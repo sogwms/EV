@@ -31,7 +31,7 @@ static void pssc_notify(pss_client_t pssc, int topic, void *msg)
 
 static int start(ev_object_t obj)
 {
-    LOG_I("attitude start");
+    LOG_I("Start");
 
     obj->pssc.notify = pssc_notify;
     return RT_EOK;
@@ -39,7 +39,7 @@ static int start(ev_object_t obj)
 
 static int stop(ev_object_t obj)
 {
-    LOG_I("attitude stop");
+    LOG_I("Stop");
 
     obj->pssc.notify = RT_NULL;
     return RT_EOK;
@@ -58,6 +58,8 @@ int ev_attitude_install(ev_attitude_t attitude)
          such as subscribe and publish.*/
 
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(attitude, EV_TOPIC_IMU));
+
+    LOG_I("Installed");
 
     return RT_EOK;
 }

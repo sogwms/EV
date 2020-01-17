@@ -37,7 +37,7 @@ static int start(ev_object_t obj)
 
     RT_ASSERT(ev_imu->thread != RT_NULL);
 
-    LOG_I("imu start");
+    LOG_I("Start");
 
     return rt_thread_resume(ev_imu->thread);
 }
@@ -48,7 +48,7 @@ static int stop(ev_object_t obj)
 
     RT_ASSERT(ev_imu->thread != RT_NULL);
 
-    LOG_I("imu stop");
+    LOG_I("Stop");
 
     return rt_thread_suspend(ev_imu->thread);
 }
@@ -77,5 +77,7 @@ int ev_imu_install(ev_imu_t imu, char *thread_name, rt_uint32_t thread_stack_siz
     rt_thread_suspend(thread);
     rt_exit_critical();
     
+    LOG_I("Installed");
+
     return RT_EOK;
 }

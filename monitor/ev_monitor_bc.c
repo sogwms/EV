@@ -111,7 +111,7 @@ static int start(ev_object_t obj)
 {
     obj->pssc.notify = pssc_notify;
 
-    LOG_I("monitor_bc start");
+    LOG_I("Start");
 
     return RT_EOK;
 }
@@ -120,7 +120,7 @@ static int stop(ev_object_t obj)
 {
     obj->pssc.notify = RT_NULL;
 
-    LOG_I("monitor_bc stop");
+    LOG_I("Stop");
 
     return RT_EOK;
 }

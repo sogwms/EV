@@ -69,14 +69,30 @@ static int __traverse_object_method(ev_t ev, int method)
 
 int ev_startup(ev_t ev)
 {
-    LOG_D("starting...");
-    return __traverse_object_method(ev, _OBJ_METHOD_START);
+    int rvl;
+
+    LOG_D("Starting...");
+    rvl = __traverse_object_method(ev, _OBJ_METHOD_START);
+    if (rvl == RT_EOK)
+        LOG_D("OK!");
+    else
+        LOG_D("FAILED!");
+
+    return rvl;
 }
 
 int ev_stop(ev_t ev)
 {
-    LOG_D("stopping...");
-    return __traverse_object_method(ev, _OBJ_METHOD_STOP);
+    int rvl;
+
+    LOG_D("Stopping...");
+    rvl = __traverse_object_method(ev, _OBJ_METHOD_STOP);
+    if (rvl == RT_EOK)
+        LOG_D("OK!");
+    else
+        LOG_D("FAILED!");
+
+    return rvl;
 }
 
 int ev_safe_startup(ev_t ev)

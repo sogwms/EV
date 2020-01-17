@@ -98,7 +98,7 @@ static void pssc_notify(pss_client_t pssc, int topic, void *msg)
 
 static int start(ev_object_t obj)
 {
-    LOG_I("status start");
+    LOG_I("Start");
 
     obj->pssc.notify = pssc_notify;
 
@@ -107,7 +107,7 @@ static int start(ev_object_t obj)
 
 static int stop(ev_object_t obj)
 {
-    LOG_I("status stop");
+    LOG_I("Stop");
 
     obj->pssc.notify = RT_NULL;
 

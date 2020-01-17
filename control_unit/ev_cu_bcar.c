@@ -108,7 +108,7 @@ static void pssc_notify(pss_client_t pssc, int topic, void *msg)
 
 static int start(ev_object_t obj)
 {
-    LOG_I("cu_bcar start");
+    LOG_I("Start");
 
     obj->pssc.notify = pssc_notify;
 
@@ -117,7 +117,7 @@ static int start(ev_object_t obj)
 
 static int stop(ev_object_t obj)
 {
-    LOG_I("cu_bcar stop");
+    LOG_I("Stop");
 
     obj->pssc.notify = RT_NULL;
 
@@ -166,6 +166,8 @@ int ev_cu_bcar_install(float akp, float akd, float skp, float ski, float rkp, fl
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(cu_bcar, EV_TOPIC_RPY));
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(cu_bcar, EV_TOPIC_RC));
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(cu_bcar, EV_TOPIC_SYS_STATUS));
+
+    LOG_I("Installed");
 
     return RT_EOK;
 }

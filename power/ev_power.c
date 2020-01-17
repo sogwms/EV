@@ -16,14 +16,14 @@
 
 static int start(ev_object_t obj)
 {
-    LOG_I("power start");
+    LOG_I("Start");
 
     return RT_EOK;
 }
 
 static int stop(ev_object_t obj)
 {
-    LOG_I("power stop");
+    LOG_I("Stop");
 
     return RT_EOK;
 }
@@ -49,6 +49,8 @@ int ev_power_install(ev_power_t power, int total_power, int alert_power)
     power->info.total_power = total_power;
     power->info.alert_power = alert_power;
     power->up_notify = up_notify;
+
+    LOG_I("Installed");
 
     return RT_EOK;
 }

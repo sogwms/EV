@@ -33,7 +33,7 @@ static void pssc_notify(pss_client_t pssc, int topic, void *msg)
 
 static int start(ev_object_t obj)
 {
-    LOG_I("motor start");
+    LOG_I("Start");
 
     obj->pssc.notify = pssc_notify;
 
@@ -42,7 +42,7 @@ static int start(ev_object_t obj)
 
 static int stop(ev_object_t obj)
 {
-    LOG_I("motor stop");
+    LOG_I("Stop");
 
     obj->pssc.notify = RT_NULL;
 
@@ -64,6 +64,8 @@ int ev_motor_install(ev_motor_t motor)
 
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(motor, EV_TOPIC_SET_MOTOR_SPEED));
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(motor, EV_TOPIC_LOCK_MOTOR));
+
+    LOG_I("Installed");
 
     return RT_EOK;
 }

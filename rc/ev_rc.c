@@ -16,14 +16,14 @@
 
 static int start(ev_object_t obj)
 {
-    LOG_I("rc start");
+    LOG_I("Start");
 
     return RT_EOK;
 }
 
 static int stop(ev_object_t obj)
 {
-    LOG_I("rc stop");
+    LOG_I("Stop");
 
     return RT_EOK;
 }
@@ -48,6 +48,8 @@ int ev_rc_install(ev_rc_t rc)
          such as subscribe and publish.*/
 
     rc->up_notify = up_notify;
+
+    LOG_I("Installed");
 
     return RT_EOK;
 }

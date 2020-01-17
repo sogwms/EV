@@ -79,7 +79,7 @@ static int start(ev_object_t obj)
 {
     struct ev_indicator_led *ind_led = (struct ev_indicator_led *)obj;
 
-    LOG_I("ind_led start");
+    LOG_I("Start");
 
     obj->pssc.notify = pssc_notify;
 
@@ -90,7 +90,7 @@ static int stop(ev_object_t obj)
 {
     struct ev_indicator_led *ind_led = (struct ev_indicator_led *)obj;
 
-    LOG_I("ind_led stop");
+    LOG_I("Stop");
 
     obj->pssc.notify = RT_NULL;
 
@@ -127,6 +127,8 @@ int ev_indicator_led_install(ev_indicator_led_t ind_led, char *thread_name, rt_u
     rt_exit_critical();
 
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(ind_led, EV_TOPIC_SYS_STATUS));
+
+    LOG_I("Installed");
 
     return RT_EOK;
 }
