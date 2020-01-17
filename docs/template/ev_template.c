@@ -22,7 +22,7 @@ static int start(ev_object_t obj)
 {
     // TODO
     
-    LOG_I("template start");
+    LOG_I("Start");
 
     return RT_EOK;
 }
@@ -31,7 +31,7 @@ static int stop(ev_object_t obj)
 {
     // TODO
 
-    LOG_I("template stop");
+    LOG_I("Stop");
 
     return RT_EOK;
 }
@@ -52,6 +52,8 @@ int ev_template_install(ev_template_t template, void *_)
 
     // EV_CHECK_EOK_RVL(EV_SUBSCRIBE(template, EV_TOTAL_TOPICS));
     // ... 
+
+    LOG_I("Installed");
 
     return RT_EOK;
 }
