@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-12-01     sogwms       The first version
+ * 2019-01-16     sogwms       Add orderly startup support
  */
 
 #include "ev.h"
@@ -14,6 +15,7 @@
 #define DBG_LEVEL         DBG_LOG
 #include <rtdbg.h>
 
+const int g_levels_table[] = EV_OBJ_LEVELS;
 static ev_t global_ev = RT_NULL;
 
 int ev_object_install(ev_object_t obj, int type)
@@ -38,29 +40,36 @@ static int __traverse_object_method(ev_t ev, int method)
     rt_list_t *node;
     struct ev_object *obj;
 
-    rt_list_for_each(node, &ev->components_head)
+    for (int ix = 0; ix < sizeof(g_levels_table)/sizeof(g_levels_table[0]); ix++)
     {
-        obj = rt_list_entry(node, struct ev_object, list);
-        if (method == _OBJ_METHOD_START)
+        rt_list_for_each(node, &ev->components_head)
         {
-            if (obj->flag & EV_FLAG_ACTIVATED)
-                return RT_ERROR;
+            obj = rt_list_entry(node, struct ev_object, list);
 
-            obj->flag |= EV_FLAG_ACTIVATED;
+            if (g_levels_table[ix] != obj->type) 
+                continue;
 
-            if (obj->start(obj) != RT_EOK) 
-                return RT_ERROR; 
+            if (method == _OBJ_METHOD_START)
+            {
+                if (obj->flag & EV_FLAG_ACTIVATED)
+                    return RT_ERROR;
 
-        }
-        else if (method == _OBJ_METHOD_STOP)
-        {
-            if (!(obj->flag & EV_FLAG_ACTIVATED))
-                return RT_ERROR; 
+                obj->flag |= EV_FLAG_ACTIVATED;
 
-            obj->flag &= (~EV_FLAG_ACTIVATED);
+                if (obj->start(obj) != RT_EOK) 
+                    return RT_ERROR; 
 
-            if (obj->stop(obj) != RT_EOK)
-                return RT_ERROR; 
+            }
+            else if (method == _OBJ_METHOD_STOP)
+            {
+                if (!(obj->flag & EV_FLAG_ACTIVATED))
+                    return RT_ERROR; 
+
+                obj->flag &= (~EV_FLAG_ACTIVATED);
+
+                if (obj->stop(obj) != RT_EOK)
+                    return RT_ERROR; 
+            }
         }
     }
 
@@ -93,40 +102,6 @@ int ev_stop(ev_t ev)
         LOG_D("FAILED!");
 
     return rvl;
-}
-
-int ev_safe_startup(ev_t ev)
-{
-    rt_list_t *node;
-    struct ev_object *obj;
-    struct ev_object *_obj = RT_NULL;
-
-    rt_list_for_each(node, &ev->components_head)
-    {
-        obj = rt_list_entry(node, struct ev_object, list);
-        if (obj->type == EV_OBJ_CONTROL_UNIT)
-        {
-            _obj = obj;
-            continue;
-        }
-        if (obj->flag & EV_FLAG_ACTIVATED)
-            continue;
-        else
-        {
-            if (obj->start(obj) != RT_EOK) 
-                return RT_ERROR; 
-        }
-    }
-
-    if (_obj != RT_NULL)
-    {
-        rt_thread_mdelay(500);
-
-        if (_obj->start(_obj) != RT_EOK) 
-            return RT_ERROR; 
-    }
-
-    return RT_EOK;
 }
 
 int ev_init(ev_t ev)

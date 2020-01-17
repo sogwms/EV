@@ -49,5 +49,4 @@ void my_ev_startup(void)
                    0.3, 0.5);
 
     ev_startup((ev_t)&mv);
-    ev_safe_startup((ev_t)&mv);
 }

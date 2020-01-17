@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2019-12-01     sogwms       The first version
+ * 2019-01-16     sogwms       Add orderly startup support
  */
 
 #ifndef __EV_H__
@@ -13,6 +14,33 @@
 
 #include <rtthread.h>
 #include "pss.h"
+    
+#define DEFAULT_EV_OBJ_LEVELS {\
+    EV_OBJ_IMU,         \
+    EV_OBJ_MOTOR,\
+    EV_OBJ_MOTOR_INFO,\
+    EV_OBJ_POWER,\
+    EV_OBJ_RC,\
+    \
+    EV_OBJ_ATTITUDE,\
+    EV_OBJ_STATUS,\
+    EV_OBJ_INDICATOR,\
+    EV_OBJ_MONITOR,\
+    \
+    EV_OBJ_UNKNOWN,\
+    EV_OBJ_CONTROL_UNIT\
+}
+
+#if defined(PKG_EV_ENABLING_CUSTOM)
+    #include <my_ev_custom.h>
+    #ifdef MY_EV_OBJ_LEVELS
+        #define EV_OBJ_LEVELS MY_EV_OBJ_LEVELS
+    #else
+        #define EV_OBJ_LEVELS DEFAULT_EV_OBJ_LEVELS
+    #endif
+#else
+    #define EV_OBJ_LEVELS DEFAULT_EV_OBJ_LEVELS
+#endif
 
 /* syntactic sugar */
 #define EV_SUBSCRIBE(obj, topic)        pss_subscribe((pss_client_t)obj, topic)
@@ -65,7 +93,6 @@ struct ev
 int ev_object_install(ev_object_t obj, int type);
 
 int ev_startup(ev_t ev);
-int ev_safe_startup(ev_t ev);
 int ev_stop(ev_t ev);
 
 int ev_init(ev_t ev);

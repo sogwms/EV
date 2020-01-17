@@ -34,8 +34,8 @@
         EV_TOTAL_TOPICS                         \
     };
 
-#if defined(PKG_EV_ENABLING_CUSTOM_TOPICS)
-    #include <mytopics.h>
+#if defined(PKG_EV_ENABLING_CUSTOM)
+    #include <my_ev_custom.h>
     #ifdef MY_EV_TOPICS
         DEF_EV_TOPICS(MY_EV_TOPICS)
     #else
