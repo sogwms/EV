@@ -6,10 +6,6 @@ ps：当前的（初期） EV 提供的多是模板部件，需要用户做的�
 
 ## 使用流程
 
-*__牵涉到坐标的务必对应上EV的[坐标系](./figures/6.jpg)__*
-
-### 简述
-
 - 0 （选择）建立自己的终端部件
 
 - 1 建立初始的 vehicle, 然后安装所需部件
@@ -30,21 +26,37 @@ int main()
 ev_startup(&my_vehicle);
 ```
 
-### 其它
+## 自定义
 
-- 必须建立 mytopics.h 文件，且内容如下。可在 _MYTOPICS_ 定义自己的 TOPIC，如果没有留空
+EV 的 Pub-Sub 是基于 topic 的，且 topic 是预先定义好的，若用户想添加自己的 topic 可以这样配置：
 
+1. 首先需要通过 'menuconfig' 使能自定义支持。
+
+2. 然后建立 ‘my_ev_custom.h’ 文件到工程
+
+3. 最后在 ‘my_ev_custom.h’ 文件添加 topic, 格式如下：
 ```c
-#include <ev_msg.h>
-#define _MYTOPICS_  \
-    MY_TOPIC_1,     \
-    MY_TOPIC_2,     \
+#ifndef __MY_EV_CUSTOM_H__
+#define __MY_EV_CUSTOM_H__
+
+#define MY_EV_TOPICS \
+    MY_TOPIC_1,      \
+    MY_TOPIC_2,      \
     ...
-DEF_EV_TOPICS(_MYTOPICS_)
+
+#endif /* __MY_EV_CUSTOM_H__ */
 ```
+
+TODO 启动顺序
+
+## 注意事项
 
 - 电机编号方式: 俯视 vehicle，取x轴的正半轴，逆时针旋转，扫过的电机依次编号为 m1,m2,...
 
 - IMU标定请参考 [imu.md](./imu.md)
 
-## 待续
+- *__牵涉到坐标的务必对应上EV的[坐标系](./figures/6.jpg)__*
+
+## 注
+
+欢迎反馈！ 您的反馈将是 EV 持续优化的强有力动力！
