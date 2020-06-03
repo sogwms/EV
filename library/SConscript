@@ -1,11 +1,14 @@
-Import('RTT_ROOT')
-Import('rtconfig')
+# for module compiling
+import os
 from building import *
 
-cwd     = GetCurrentDir()
-src     = Glob('*.c')
-CPPPATH = [cwd, str(Dir('#'))]
+cwd  = GetCurrentDir()
+objs = []
+list = os.listdir(cwd)
 
-group = DefineGroup('ev', src, depend = ['PKG_USING_EV'], CPPPATH = CPPPATH)
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
-Return('group')
+Return('objs')
