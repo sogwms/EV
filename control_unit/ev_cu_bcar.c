@@ -41,22 +41,24 @@ static void __compute(struct ev_cu_bcar_info *info, struct ev_cu_bcar_params *pa
     long oleft;
     long oright;
 
-    oangle = params->akp * (1.5f - info->rpy.pitch) + params->akd * (0.0f - info->imu.gyro_y);
+    oangle = params->akp * (0.0f - info->rpy.pitch) + params->akd * (0.0f - info->imu.gyro_y);
 
     pss_publish(EV_TOPIC_REQUEST_MOTOR_SPEED, &info->motor_speed);
-    params->serr = params->serr * 0.8f + (((info->motor_speed.m1 + info->motor_speed.m2) / 2) - 0) * 0.2f;
-    params->sintegral += params->serr;
-    params->sintegral -= info->motion.velocity_x;
-    if (params->sintegral > EV_SCALE*20)
-        params->sintegral = EV_SCALE*20;
-    if (params->sintegral < -EV_SCALE*20)
-        params->sintegral = -EV_SCALE*20;
+    params->serr = params->serr * 0.8f + (info->motion.velocity_x/3.0f - ((info->motor_speed.m1 + info->motor_speed.m2) / 2)) * 0.2f;
+    params->sintegral += 0.1f * params->ski * params->serr;
+    // params->sintegral = info->motion.velocity_x - params->sintegral;
+    params->sintegral = 0.0f - params->sintegral;
 
-    ospeed = params->skp * params->serr - params->ski * 0.1f * params->sintegral;
+    if (params->sintegral > EV_SCALE*1.3)
+        params->sintegral = EV_SCALE*1.3;
+    if (params->sintegral < -EV_SCALE*1.3)
+        params->sintegral = -EV_SCALE*1.3;
+
+    ospeed = params->skp * params->serr + params->sintegral;
     odir = params->rkp * info->motion.rotation_z + params->rkd * info->imu.gyro_z;
 
-    oleft = oangle + ospeed + odir;
-    oright = oangle + ospeed - odir;
+    oleft = oangle - ospeed + odir;
+    oright = oangle - ospeed - odir;
 
     if (oleft > EV_SCALE)
         oleft = EV_SCALE;

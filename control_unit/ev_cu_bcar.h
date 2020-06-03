@@ -24,8 +24,10 @@ struct ev_cu_bcar_params
 
     float skp;
     float ski;
+    float scount;
     int32_t serr;
     int32_t sintegral;
+    int32_t sout_old, sout_err;
 
     int scnt;
 };
