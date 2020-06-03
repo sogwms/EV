@@ -17,13 +17,19 @@
 static void __report_motor_speed(int interval, int duration)
 {
     struct msg_motor mmotor_speed = {0};
+    int average[4] = {0};
     rt_kprintf("duration:%d\n", duration);
     for (int i = 0; i < duration/interval; i++)
     {
         rt_thread_mdelay(interval);
         pss_publish(EV_TOPIC_REQUEST_MOTOR_SPEED, &mmotor_speed);
         rt_kprintf("[t%d] m1:%d  m2:%d  m3:%d  m4:%d\n", i, mmotor_speed.m1, mmotor_speed.m2, mmotor_speed.m3, mmotor_speed.m4);
+        average[0] = average[0] * 0.6 + mmotor_speed.m1 * 0.4;
+        average[1] = average[1] * 0.6 + mmotor_speed.m2 * 0.4;
+        average[2] = average[2] * 0.6 + mmotor_speed.m3 * 0.4;
+        average[3] = average[3] * 0.6 + mmotor_speed.m4 * 0.4;
     }
+    rt_kprintf("[!average] m1:%d m2:%d m3:%d m4:%d\n", average[0], average[1], average[2], average[3]);
 }
 
 static void __set_motor_speed(int m1, int m2, int m3, int m4)
