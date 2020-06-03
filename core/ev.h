@@ -18,16 +18,16 @@
 #include "pss.h"
     
 #define DEFAULT_EV_OBJ_LEVELS {\
-    EV_OBJ_IMU,         \
+    EV_OBJ_STATUS,\
+    EV_OBJ_MONITOR,\
     EV_OBJ_MOTOR,\
     EV_OBJ_MOTOR_INFO,\
+    EV_OBJ_ATTITUDE,\
+    EV_OBJ_IMU,         \
     EV_OBJ_POWER,\
     EV_OBJ_RC,\
     \
-    EV_OBJ_ATTITUDE,\
-    EV_OBJ_STATUS,\
     EV_OBJ_INDICATOR,\
-    EV_OBJ_MONITOR,\
     \
     EV_OBJ_UNKNOWN,\
     EV_OBJ_CONTROL_UNIT\
