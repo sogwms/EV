@@ -139,7 +139,7 @@ int ev_monitor_bc_install(void)
          that involves the parent class
          such as subscribe and publish.*/
 
-    monitor_bc->test_balance = __check_imbalance;
+    monitor_bc->test_balance = __check_balance;
     monitor_bc->test_power = __check_low_power;
 
     EV_CHECK_EOK_RVL(EV_SUBSCRIBE(monitor_bc, EV_TOPIC_RPY));
